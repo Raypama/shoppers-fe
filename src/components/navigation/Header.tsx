@@ -65,45 +65,26 @@ export default function Header() {
               <button className="hover:text-stone-600">Categories</button>
 
               {showCategories && (
-                <div className="absolute left-0  top-full w-[800px] bg-white shadow-lg border py-6 px-8 grid grid-cols-3 gap-6">
+                <div className="absolute left-0  top-full w-fit bg-white shadow-lg  p-10 pr-20 grid grid-cols-3 gap-6">
                   <div>
                     <h4 className="font-semibold text-sm mb-3">Popular</h4>
                     <ul className="space-y-2 text-sm">
                       <li>
-                        <Link href="#">Sneakers</Link>
+                        <Link href="http://localhost:3000/collections/all-product?category_id=1&page=1">Shoes</Link>
                       </li>
                       <li>
-                        <Link href="#">Boots</Link>
+                        <Link href="http://localhost:3000/collections/all-product?category_id=3&page=1">Apparel</Link>
                       </li>
                       <li>
-                        <Link href="#">Sandals</Link>
+                        <Link href="http://localhost:3000/collections/all-product?category_id=4&page=1">Accesories</Link>
+                      </li>
+                      <li>
+                        <Link href="http://localhost:3000/collections/all-product?category_id=2&page=1">Bags</Link>
                       </li>
                     </ul>
                   </div>
 
-                  <div>
-                    <h4 className="font-semibold text-sm mb-3">Men</h4>
-                    <ul className="space-y-2 text-sm">
-                      <li>
-                        <Link href="#">Sports</Link>
-                      </li>
-                      <li>
-                        <Link href="#">Lifestyle</Link>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-sm mb-3">Women</h4>
-                    <ul className="space-y-2 text-sm">
-                      <li>
-                        <Link href="#">Heels</Link>
-                      </li>
-                      <li>
-                        <Link href="#">Fashion</Link>
-                      </li>
-                    </ul>
-                  </div>
+                  
                 </div>
               )}
             </div>
@@ -116,7 +97,7 @@ export default function Header() {
               <button className="hover:text-stone-600">Brands</button>
 
               {showBrands && (
-                <div className="absolute left-0 top-full w-[600px] bg-white shadow-lg border py-6 px-8 grid grid-cols-2 gap-4">
+                <div className="absolute left-0 top-full w-fit bg-white shadow-lg p-10 pr-20 grid grid-cols-2 gap-4">
                   <ul className="space-y-2 text-sm">
                     <li>
                       <Link href="#">Nike</Link>
@@ -127,9 +108,12 @@ export default function Header() {
                     <li>
                       <Link href="#">Adidas</Link>
                     </li>
+                    <li>
+                      <Link href="#">Reebok</Link>
+                    </li>
                   </ul>
 
-                  <ul className="space-y-2 text-sm">
+                  {/* <ul className="space-y-2 text-sm">
                     <li>
                       <Link href="#">Converse</Link>
                     </li>
@@ -139,7 +123,7 @@ export default function Header() {
                     <li>
                       <Link href="#">Reebok</Link>
                     </li>
-                  </ul>
+                  </ul> */}
                 </div>
               )}
             </div>
