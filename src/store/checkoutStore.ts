@@ -1,28 +1,39 @@
-// src/store/checkoutStore.ts
 import { create } from "zustand";
 import { checkoutAPI } from "@/lib/checkout";
+import type { AxiosResponse } from "axios";
 
 interface CheckoutState {
-  selectedItem: number | null;
-  setSelected: (id: number) => void;
-  checkout: (payment_method?: string) => Promise<any>;
+  selectedItems: number[];
+  toggleSelected: (id: number) => void;
+  clearSelected: () => void;
+  checkout: (payment_method?: string) => Promise<AxiosResponse[] | null>;
 }
 
 export const useCheckoutStore = create<CheckoutState>((set, get) => ({
-  selectedItem: null,
+  selectedItems: [],
 
-  setSelected: (id) => set({ selectedItem: id }),
+  toggleSelected: (id) =>
+    set((state) => ({
+      selectedItems: state.selectedItems.includes(id)
+        ? state.selectedItems.filter((i) => i !== id)
+        : [...state.selectedItems, id],
+    })),
+
+  clearSelected: () => set({ selectedItems: [] }),
 
   checkout: async (payment_method = "BCA VA") => {
-    const itemId = get().selectedItem;
+    const itemIds = get().selectedItems;
 
-    if (!itemId) {
-      alert("please select one item!");
-      return;
+    if (itemIds.length === 0) {
+      alert("please select at least one item!");
+      return null;
     }
 
-    const res = await checkoutAPI(itemId, payment_method);
+    // 🔥 CALL API SATU-SATU
+    const responses = await Promise.all(
+      itemIds.map((id) => checkoutAPI(id, payment_method))
+    );
 
-    return res; // <= IMPORTANT
+    return responses; // AxiosResponse[]
   },
 }));

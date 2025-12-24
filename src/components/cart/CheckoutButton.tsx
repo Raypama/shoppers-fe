@@ -1,18 +1,34 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkoutStore";
 
 export default function CheckoutButton() {
   const router = useRouter();
-  const selectedItem = useCheckoutStore((state) => state.selectedItem);
+
+  // ✅ ambil array
+  const selectedItems = useCheckoutStore((state) => state.selectedItems);
+
+  const isDisabled = selectedItems.length === 0;
 
   return (
     <button
-      disabled={!selectedItem}
+      disabled={isDisabled}
       onClick={() => router.push("/checkout")}
-      className="mt-4 w-full bg-black text-white py-3 rounded-lg hover:bg-opacity-80 disabled:bg-gray-400"
+      className={`mt-4 w-full py-3 rounded-lg transition
+        ${
+          isDisabled
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-black text-white hover:bg-opacity-80"
+        }
+      `}
     >
       Proceed to Checkout
+      {!isDisabled && (
+        <span className="ml-2 text-sm opacity-80">
+          ({selectedItems.length})
+        </span>
+      )}
     </button>
   );
 }

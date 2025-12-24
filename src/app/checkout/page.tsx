@@ -1,123 +1,122 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { useCheckoutStore } from "@/store/checkoutStore";
 import { useRouter } from "next/navigation";
-
-// simple spinner
-const Spinner = () => (
-  <div className="flex justify-center items-center">
-    <div className="h-6 w-6 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
-  </div>
-);
 
 export default function CheckoutPage() {
   const router = useRouter();
 
   const { cart, fetchCart } = useCartStore();
-  const { selectedItem, checkout } = useCheckoutStore();
+  const { selectedItems, checkout, clearSelected } = useCheckoutStore();
 
   const [paymentMethod, setPaymentMethod] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const selectedCart = cart.find((c) => c.id === selectedItem);
-  
-  
   useEffect(() => {
-      fetchCart();
-    }, [fetchCart]);
-    
-    const handleCheckout = async () => {
-        console.log(selectedCart ,'ini selected cart');
-        if (!paymentMethod) {
-            alert("Pilih metode pembayaran!");
-            return;
-        }
-        
-    setLoading(true);
+    fetchCart();
+  }, [fetchCart]);
 
-    try {
-      const res = await checkout(paymentMethod);
+  // ✅ derive selected carts safely
+  const selectedCarts = useMemo(() => {
+    return cart.filter((c) => selectedItems.includes(c.id));
+  }, [cart, selectedItems]);
 
-      if (res?.status === 201) {
-        router.push("/account?tab=pending");
-      }
-    } catch (err) {
-      console.log(err);
-      alert("Checkout failed!");
-    } finally {
-      setLoading(false);
+  // ✅ hitung total
+  const total = useMemo(() => {
+    return selectedCarts.reduce(
+      (sum, item) => sum + item.price * item.qty,
+      0
+    );
+  }, [selectedCarts]);
+
+ const handleCheckout = async () => {
+  if (!paymentMethod) return;
+
+  setLoading(true);
+  try {
+    const res = await checkout(paymentMethod);
+
+    if (!res || res.length === 0) {
+      throw new Error("Checkout failed");
     }
-  };
 
-  if (!selectedCart)
-    return (
-      <div className="max-w-lg mx-auto p-6 mt-10 text-center">
-        <p className="text-gray-600 text-lg">
-          no selected cart items
-        </p>
-      </div>
+    // cek minimal 1 sukses
+    const success = res.some(
+      (r) => r.status === 201 || r.status === 200
     );
 
+    if (success) {
+      clearSelected();
+      router.push("/account?tab=pending");
+    } else {
+      throw new Error("Checkout failed");
+    }
+  } catch (err) {
+    alert("Checkout failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+  // ✅ empty guard
+  if (selectedItems.length === 0) {
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        No selected items
+      </p>
+    );
+  }
+
   return (
-    <div className="max-w-lg mx-auto p-6 mt-10">
+    <div className="max-w-lg mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">Checkout</h1>
 
-      {/* TITLE */}
-      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
-
-      {/* CART ITEM SUMMARY */}
-      <div className="border rounded-lg p-4 mb-6 shadow-sm bg-white">
-        <h2 className="font-semibold mb-4">Selected Cart :</h2>
-
-        <div className="flex justify-between">
-          <div>
-            <p className="font-medium">{selectedCart.name}</p>
-            <p className="text-sm text-gray-500">Qty: {selectedCart.qty}</p>
+      {/* ITEMS */}
+      <div className="space-y-2">
+        {selectedCarts.map((item) => (
+          <div
+            key={item.id}
+            className="flex justify-between text-sm"
+          >
+            <span>
+              {item.name} × {item.qty}
+            </span>
+            <span>
+              Rp {(item.price * item.qty).toLocaleString()}
+            </span>
           </div>
-
-          <p className="font-semibold">
-            Rp {(selectedCart.price * selectedCart.qty).toLocaleString()}
-          </p>
-        </div>
+        ))}
       </div>
 
-      {/* PAYMENT METHODS */}
-      <div className="border rounded-lg p-4 mb-6 shadow-sm bg-white ">
-        <h2 className="font-semibold mb-4">Payment Method</h2>
+      <hr className="my-4" />
 
-        <div className="space-y-3">
+      <p className="font-semibold mb-4">
+        Total: Rp {total.toLocaleString()}
+      </p>
 
-          {["BCA VA", "BRI VA", "MANDIRI VA", "BNI VA", "BANK DKI VA", "QRIS"].map((method) => (
-            <label
-              key={method}
-              className={`flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-stone-800 hover:text-white transition 
-              ${
-                paymentMethod === method
-                  ? "border-black dark:border-white"
-                  : "border-gray-300 dark:border-neutral-700"
-              }`}
-            >
-              <input
-                type="radio"
-                value={method}
-                checked={paymentMethod === method}
-                onChange={() => setPaymentMethod(method)}
-              />
-              <span>{method}</span>
-            </label>
-          ))}
-
-        </div>
-      </div>
+      {/* PAYMENT */}
+      <select
+        className="border p-2 w-full mb-4"
+        value={paymentMethod}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      >
+        <option value="">Select payment</option>
+        <option value="BCA VA">BCA VA</option>
+        <option value="BRI VA">BRI VA</option>
+        <option value="QRIS">QRIS</option>
+      </select>
 
       {/* BUTTON */}
       <button
-        disabled={loading}
+        disabled={loading || !paymentMethod}
         onClick={handleCheckout}
-        className="w-full bg-black text-white py-3 rounded-lg hover:bg-opacity-80 disabled:opacity-40"
+        className="w-full bg-black text-white py-3 rounded disabled:opacity-50"
       >
-        {loading ? <Spinner /> : "Checkout Now"}
+        {loading ? "Processing..." : "Checkout Now"}
       </button>
     </div>
   );
