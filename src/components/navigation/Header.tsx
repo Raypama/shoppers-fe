@@ -23,6 +23,7 @@ export default function Header() {
     router.push(`/search?query=${query}`);
   };
 
+  const baseURL = process.env.FE_BASE_URL
   return (
     <header className="w-full z-50">
       {/* TOP BAR */}
@@ -70,7 +71,7 @@ export default function Header() {
                     <h4 className="font-semibold text-sm mb-3">Popular</h4>
                     <ul className="space-y-2 text-sm">
                       <li>
-                        <Link href="http://localhost:3000/collections/all-product?category_id=1&page=1">Shoes</Link>
+                        <Link href='http://localhost:3000/collections/all-product?category_id=1&page=1'>Shoes</Link>
                       </li>
                       <li>
                         <Link href="http://localhost:3000/collections/all-product?category_id=3&page=1">Apparel</Link>
@@ -100,16 +101,16 @@ export default function Header() {
                 <div className="absolute left-0 top-full w-fit bg-white shadow-lg p-10 pr-20 grid grid-cols-2 gap-4">
                   <ul className="space-y-2 text-sm">
                     <li>
-                      <Link href="#">Nike</Link>
+                      <Link href='http://localhost:3000/collections/all-product?brand_id=1&page=1'>Nike</Link>
                     </li>
                     <li>
-                      <Link href="#">Puma</Link>
+                      <Link href="http://localhost:3000/collections/all-product?brand_id=3&page=1">Puma</Link>
                     </li>
                     <li>
-                      <Link href="#">Adidas</Link>
+                      <Link href="http://localhost:3000/collections/all-product?brand_id=4&page=1">Adidas</Link>
                     </li>
                     <li>
-                      <Link href="#">Reebok</Link>
+                      <Link href="http://localhost:3000/collections/all-product?brand_id=4&page=1">Reebok</Link>
                     </li>
                   </ul>
 
