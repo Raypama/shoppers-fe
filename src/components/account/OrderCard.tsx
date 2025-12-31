@@ -4,30 +4,49 @@ import PayNow from "./PayNow";
 type Props = {
   order: Order;
   activeTab: string;
+  onRefresh : ()=> void
 };
 
-export default function OrderCard({ order, activeTab }: Props) {
+export default function OrderCard({ order, activeTab, onRefresh }: Props) {
   const router = useRouter();
- const handleMarkAsCompleted = async (orderId: string | number) => {
-  try {
-    const res = await api.patch(`/orders/${orderId}`, {
-      status: "COMPLETED",
-    });
+  // const fetchOrders = useOrderStore((s) => s.fetchOrders);
+  const handleCancelOrder = async (orderId: number | string) => {
+    const confirmCancel = confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmCancel) return;
 
-    alert("Order Completed!");
+    try {
+      await api.put(`/api/orders/${orderId}`, {
+        status: "CANCELED",
+      });
 
-    router.refresh(); // lebih Next.js daripada reload
+      alert("Order canceled successfully");
+      onRefresh();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to cancel order");
+    }
+  };
+  const handleMarkAsCompleted = async (orderId: string | number) => {
+    try {
+      const res = await api.patch(`/api/orders/${orderId}`, {
+        status: "COMPLETED",
+      });
 
-  } catch (error) {
-    console.error(error);
-    alert("Terjadi kesalahan saat menyelesaikan pesanan.");
-  }
-};
+      alert("Order Completed!");
+
+      router.refresh(); // lebih Next.js daripada reload
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan saat menyelesaikan pesanan.");
+    }
+  };
   return (
     <div className="bg-white border rounded-lg mb-4">
       {/* HEADER */}
       <div className="flex justify-between items-center px-4 py-3 border-b text-sm">
-        <span className="font-medium">Order #{order.id}</span>
+        <span className="font-medium">No. Order #{order.id}</span>
         <span className="text-orange-500 font-semibold uppercase">
           {order.status}
         </span>
@@ -75,7 +94,14 @@ export default function OrderCard({ order, activeTab }: Props) {
           </span>
         </div>
         {activeTab === "pending" && order.status === "PENDING" && (
-          <div className="flex justify-end px-4 py-3 bg-gray-50">
+          <div className="flex justify-end gap-2 px-4 py-3 bg-gray-50">
+            {/* CANCEL */}
+            <button
+              onClick={() => handleCancelOrder(order.id)}
+              className="px-4 py-2 text-sm  transition duration-1000 text-red-500 font-bold cursor-pointer rounded hover:bg-red-100 transition"
+            >
+              Cancel Order
+            </button>
             <PayNow orderId={order.id} />
           </div>
         )}

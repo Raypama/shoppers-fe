@@ -8,15 +8,12 @@ import { useCheckoutStore } from "@/store/checkoutStore";
 
 export default function CartPage() {
   const { cart, fetchCart } = useCartStore();
-
-  // ✅ ambil array selectedItems
-  const selectedItems = useCheckoutStore((state) => state.selectedItems);
+  const selectedItems = useCheckoutStore((s) => s.selectedItems);
 
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
 
-  // ✅ hitung total dari item yang dipilih (MULTI)
   const total = useMemo(() => {
     return cart
       .filter((item) => selectedItems.includes(item.id))
@@ -27,17 +24,15 @@ export default function CartPage() {
     <div className="max-w-3xl mx-auto p-5">
       <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
 
-      {/* CART ITEMS */}
       <div className="space-y-4">
         {cart.length === 0 ? (
-          <p className="text-gray-500">Your cart is empty.</p>
+          <p className="text-gray-500">Your cart is empty</p>
         ) : (
           cart.map((item) => <CartItem key={item.id} {...item} />)
         )}
       </div>
 
-      {/* SUMMARY */}
-      <div className="mt-6 border-t pt-4 space-y-2">
+      <div className="mt-6 border-t pt-4">
         <p className="text-sm text-gray-500">
           Selected items: {selectedItems.length}
         </p>

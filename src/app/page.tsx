@@ -8,21 +8,21 @@ export default async function HomePage() {
   //   const products = await getProducts();
 
   return (
-    <section>
-      <div className="mb-8">
-        <div className="rounded-lg overflow-hidden relative">
-          <h1 className="font-bold  text-2xl mt-2">
-            Big <span className="text-red-800">Sale!!!</span> Welcomes To Shopping anyway
-          </h1>
-          <Banner/>
-        </div>
+    <div className="mb-8">
+      <section className="rounded-lg overflow-hidden relative">
+        <h1 className="font-bold  text-2xl mt-2">
+          Big <span className="text-red-800">Sale!!!</span> Welcomes To Shopping
+          anyway
+        </h1>
+        <Banner />
+      </section>
+      <section>
         <h2 className="font-bold  text-2xl">
-            Select From <span className="text-amber-950">Category:</span>
-          </h2>
-        <Categories/>
-      </div>
-
+          Our <span className="text-amber-950">Category:</span>
+        </h2>
+        <Categories />
+      </section>
       {/* <ProductGrid products={products} /> */}
-    </section>
+    </div>
   );
 }

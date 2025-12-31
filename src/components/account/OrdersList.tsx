@@ -6,9 +6,10 @@ import { statusTabMap } from "@/lib/orderStatus";
 
 type Props = {
   orders: any[];
+  onRefresh: () => void;
 };
-
-export default function OrderList({ orders }: Props) {
+// DESCENDING DISINI  Orders diolah disini
+export default function OrderList({ orders, onRefresh }: Props) {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "all";
 
@@ -28,7 +29,12 @@ export default function OrderList({ orders }: Props) {
   return (
     <div>
       {filteredOrders.map((order) => (
-        <OrderCard key={order.id} order={order} activeTab={activeTab} />
+        <OrderCard
+          key={order.id}
+          order={order}
+          activeTab={activeTab}
+          onRefresh={onRefresh}
+        />
       ))}
     </div>
   );

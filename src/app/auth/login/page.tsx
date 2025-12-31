@@ -47,7 +47,7 @@ export default function LoginPage() {
         user: data.data.user,
         token: data.data.token,
       });
-     toast.success("Sign in successful!");
+      toast.success("Sign in successful!");
       router.push("/");
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -67,9 +67,7 @@ export default function LoginPage() {
         </h1>
 
         {error && (
-          <div className="text-sm text-red-600  px-3 py-2 rounded">
-            {error}
-          </div>
+          <div className="text-sm text-red-600  px-3 py-2 rounded">{error}</div>
         )}
 
         <div className="space-y-2">
@@ -86,8 +84,9 @@ export default function LoginPage() {
         <div className="space-y-2">
           <label className="text-sm font-medium text-stone-700">Password</label>
           <input
-            name="password"
             type="password"
+            name="password"
+            autoComplete="current-password"
             required
             placeholder="••••••••"
             className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-stone-300"

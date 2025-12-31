@@ -26,31 +26,28 @@ export default function CartItem({
   const addToCart = useCartStore((s) => s.addToCart);
   const updateItem = useCartStore((s) => s.updateItem);
 
-  const toggleSelected = useCheckoutStore((s) => s.toggleSelected);
-  const selectedItems = useCheckoutStore((s) => s.selectedItems);
+  const { selectedItems, toggleSelected } = useCheckoutStore();
 
   return (
-    <div className="flex items-center justify-between p-4 border-b">
-      <div className="flex items-center gap-4">
-        {/* ✅ MULTI CHECKBOX */}
+    <div className="flex justify-between items-center border-b p-4">
+      <div className="flex gap-4 items-center">
         <input
           type="checkbox"
           checked={selectedItems.includes(id)}
           onChange={() => toggleSelected(id)}
-          className="h-4 w-4"
         />
 
-        <div className="relative h-20 w-20 rounded overflow-hidden">
+        <div className="relative w-20 h-20">
           <Image
             src={image || "/placeholder.png"}
             alt={name}
             fill
-            className="object-cover"
+            className="object-cover rounded"
           />
         </div>
 
         <div>
-          <p className="font-semibold">{name}</p>
+          <p className="font-medium">{name}</p>
           <p className="text-sm text-gray-500">
             Rp {price.toLocaleString()}
           </p>
@@ -58,7 +55,7 @@ export default function CartItem({
       </div>
 
       <div className="flex flex-col items-end gap-2">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <button onClick={() => updateItem(id, qty - 1)}>-</button>
           <span>{qty}</span>
           <button onClick={() => addToCart(productId, 1)}>+</button>
@@ -66,9 +63,9 @@ export default function CartItem({
 
         <button
           onClick={() => removeFromCart(id)}
-          className="text-red-600 flex gap-1"
+          className="text-red-500 text-sm flex items-center gap-1"
         >
-          <Trash2 size={16} /> Remove
+          <Trash2 size={14} /> Remove
         </button>
       </div>
     </div>

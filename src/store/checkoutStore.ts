@@ -6,7 +6,7 @@ interface CheckoutState {
   selectedItems: number[];
   toggleSelected: (id: number) => void;
   clearSelected: () => void;
-  checkout: (payment_method?: string) => Promise<AxiosResponse[] | null>;
+  checkout: () => Promise<AxiosResponse | null>;
 }
 
 export const useCheckoutStore = create<CheckoutState>((set, get) => ({
@@ -21,19 +21,14 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
 
   clearSelected: () => set({ selectedItems: [] }),
 
-  checkout: async (payment_method = "BCA VA") => {
+  checkout: async () => {
     const itemIds = get().selectedItems;
 
     if (itemIds.length === 0) {
-      alert("please select at least one item!");
+      alert("Please select at least one item");
       return null;
     }
 
-    // 🔥 CALL API SATU-SATU
-    const responses = await Promise.all(
-      itemIds.map((id) => checkoutAPI(id, payment_method))
-    );
-
-    return responses; // AxiosResponse[]
+    return checkoutAPI(itemIds, "BCA VA");
   },
 }));
